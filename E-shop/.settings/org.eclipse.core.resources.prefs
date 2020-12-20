@@ -1,4 +1,13 @@
 eclipse.preferences.version=1
+encoding//WebContent/css/common.css=UTF-8
+encoding//WebContent/css/eshop.css=UTF-8
+encoding//WebContent/css/font-awesome.min.css=UTF-8
 encoding//WebContent/css/reset.css=UTF-8
-encoding//WebContent/eshop/login.jsp=UTF-8
+encoding//WebContent/e_shop.jsp=UTF-8
+encoding//WebContent/else_login.jsp=UTF-8
+encoding//WebContent/js/common.js=UTF-8
+encoding//WebContent/js/jquery.min.js=UTF-8
+encoding//WebContent/login.jsp=UTF-8
+encoding//src/servlet/LoginServlet.java=UTF-8
+encoding//src/servlet/RegisterServlet.java=UTF-8
 encoding/<project>=UTF-8

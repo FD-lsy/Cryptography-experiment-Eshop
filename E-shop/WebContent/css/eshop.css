@@ -1,0 +1,185 @@
+@charset "UTF-8";
+
+.fl {
+	float: left;
+}
+.fr {
+	float: right;
+}
+#wrap {
+	min-width: 1200px;
+	margin-left: auto;
+	margin-right: auto;
+}
+.clearfix {
+	min-height: 1px;
+}
+.row {
+	width:1200px;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+/*-------------------header-------------------*/
+#header {
+	background-color: #FFF;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #E0E0E0;
+}
+#header .head_search {
+	border: 1px solid #E0E0E0;
+	line-height: 38px;
+	height: 38px;
+	width: 360px;
+	margin-bottom: 5px;
+	margin-top: 5px;
+}
+#header .search_text{
+	position: absolute;
+	top: 9px;
+	right: 410px;
+	font-family: "微软雅黑";
+	font-weight: bold;
+	font-size: 23px;
+	color: #444444;
+	text-align: right;
+}
+#header .logo {
+	height: 40px;
+	width: 40px;
+	float: left;
+	margin: auto;
+}
+#header .head_form {
+	font-size: 14px;
+	line-height: 38px;
+	height: 38px;
+	width: 280px;
+	border: none;
+	float: left;
+	font-family: "微软雅黑";
+	padding-right: 3px;
+	padding-left: 3px;
+	color: #666;
+}
+#header .head_search_btn {
+	line-height: 38px;
+	background-image: url(../images/head_search_btn.gif);
+	background-repeat: no-repeat;
+	background-position: center bottom;
+	height: 38px;
+	width: 74px;
+	border: none;
+	float: right;
+	cursor: pointer;
+}
+
+/*-------------------recommend-------------------*/
+#recommend {
+	background-image: url(../../images/recommend_bg.png);
+	background-repeat: no-repeat;
+	background-position: center top;
+	margin-right: auto;
+	margin-left: auto;
+	/*height: 512px;*/
+	padding-top: 75px;
+	padding-bottom: 32px;
+	margin-bottom: 40px;
+}
+#recommend .rec_title {
+	font-size: 18px;
+	color: #FF9346;
+	text-align: center;
+	height: 75px;
+	margin-top: 10px;
+	text-transform: uppercase;
+	font-family: Georgia, "Times New Roman", Times, serif;
+	line-height: 1.5em;
+}
+#recommend .rec_title2 {
+	font-size: 14px;
+	text-align: center;
+	margin-bottom: 15px;
+	color: #444;
+}
+#recommend .rec_title2 a {
+	color: #444;
+}
+#recommend .rec_title2 a:hover {
+	color: #FFBB31;
+}
+#recommend .rec_list {
+	padding-right: 8px;
+	padding-left: 8px;
+	margin-bottom: 10px;
+}
+#recommend .rec_pic {
+	text-align: center;
+	height: 220px;
+	width: 260px;
+	margin-bottom: 25px;
+}
+#recommend .rec_tag {
+	font-size: 18px;
+	line-height: 30px;
+	color: #FFF;
+	background-color: #008FDD;
+	background-image: url(../images/rec_tag_bg.gif);
+	background-repeat: no-repeat;
+	background-position: right center;
+	height: 30px;
+	width: 180px;
+	padding-left: 15px;
+	position: absolute;
+	left: 0px;
+	bottom: 10px;
+}
+
+/*-------------------footer-------------------*/
+#footer {
+	margin-top: 60px;
+	background-color: #FFF;
+	padding-top: 40px;
+	padding-bottom: 20px;
+	border-top-width: 1px;
+	border-top-style: solid;
+	border-top-color: #E0E0E0;
+}
+#footer .foot_service {
+	padding-bottom: 50px;
+	padding-left: 50px;
+}
+#footer .foot_service li {
+	float: left;
+	height: 53px;
+	width: 150px;
+	padding-left: 80px;
+	font-size: 16px;
+	padding-top: 12px;
+}
+#footer .foot_service li.s1 {
+	background-image: url(../images/foot_service.gif);
+	background-repeat: no-repeat;
+	background-position: left center;
+}
+#footer .foot_service li.s2 {
+	background-image: url(../images/foot_service2.gif);
+	background-repeat: no-repeat;
+	background-position: left center;
+}
+#footer .foot_service li.s3 {
+	background-image: url(../images/foot_service3.gif);
+	background-repeat: no-repeat;
+	background-position: left center;
+}
+#footer .foot_service li.s4 {
+	background-image: url(../images/foot_service4.gif);
+	background-repeat: no-repeat;
+	background-position: left center;
+}
+#footer .foot_service li.s5 {
+	background-image: url(../images/foot_service5.gif);
+	background-repeat: no-repeat;
+	background-position: left center;
+}

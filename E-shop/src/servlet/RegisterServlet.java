@@ -2,6 +2,7 @@ package servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
 //import java.io.Writer;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -15,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import DBTool.DBUtil;
 
-@WebServlet("/register_servlet")
+@WebServlet(name = "register_servlet", urlPatterns = { "/register_servlet" })
 public class RegisterServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
@@ -36,23 +37,26 @@ public class RegisterServlet extends HttpServlet {
 		try {
 			Connection conn = DBUtil.getConnection();
 			Statement st = conn.createStatement();
-			String sql = "select * from database.user where username='" + username + "' and password='"
-					+ password + "'";
-			String sql1 = "insert into database.user(username,password,admin) values('" + username + "','"+ password+"',0)";
+			String sql = "select * from database.user where username='" + username + "'";
+			String sql1 = "insert into database.user(username,password,admin) values('" + username + "','" + password
+					+ "',0)";
 			ResultSet rs = st.executeQuery(sql);
-			//用户尚未注册
-			if(!rs.next()) {
-				st.execute(sql1);
-				out.print("<script language='javascript'>alert('succcess');window.location.href='/E-shop/eshop/register.jsp';</script>");
-				request.setAttribute("flag", "0");
-				request.getRequestDispatcher("/eshop/login.jsp").forward(request, response);
+			// 用户已存在
+			if (rs.next()) {
+				String a = URLEncoder.encode("用户名重复，请重新输入！", "UTF-8");
+				out.print("<script>alert(decodeURIComponent('" + a + "') );window.location.href='register.jsp'</script>");
+				// request.setAttribute("flag", "0");
+				// request.getRequestDispatcher("/login.jsp").forward(request, response);
+				out.flush();
 				out.close();
+
 			}
-			//用户已存在
+			// 用户尚未注册
 			else {
-				out.print("<script language='javascript'>alert('Wrong');window.location.href='/E-shop/eshop/register.jsp';</script>");
-				//request.setAttribute("flag", "0");
-				//request.getRequestDispatcher("/eshop/login.jsp").forward(request, response);
+				st.execute(sql1);
+				String a = URLEncoder.encode("注册成功！即将进入登录页面，请重新登录", "UTF-8");
+				out.print("<script>alert(decodeURIComponent('" + a + "') );window.location.href='login.jsp'</script>");
+				// request.getRequestDispatcher("/login.jsp").forward(request, response);
 				out.flush();
 				out.close();
 			}
