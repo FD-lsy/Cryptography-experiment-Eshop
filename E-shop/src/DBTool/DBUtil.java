@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.*;
 
 public class DBUtil {
-	// 链接的mysql数据库
+	// 链接的database数据库
 	public static String url = "jdbc:mysql://localhost:3306/database?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false";
 	private static String driverClass = "com.mysql.cj.jdbc.Driver";
 	private static String username = "root";
@@ -24,7 +24,7 @@ public class DBUtil {
 	public static Connection getConnection() {
 		try {
 			conn = DriverManager.getConnection(url, username, password);
-			System.out.print("数据库连接成功！");
+//			System.out.print("数据库连接成功！");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

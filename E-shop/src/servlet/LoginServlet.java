@@ -5,6 +5,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import DBTool.DBUtil;
 
@@ -43,6 +44,8 @@ public class LoginServlet extends HttpServlet {
 			throws ServletException, IOException {
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
+		HttpSession session = request.getSession();
+		session.setAttribute("username",username);
 		response.setContentType("text/html; charset=UTF-8");
 		PrintWriter out = response.getWriter();
 		try {
@@ -53,8 +56,9 @@ public class LoginServlet extends HttpServlet {
 			ResultSet rs = st.executeQuery(sql);
 			// 用户存在且为普通用户
 			if (rs.next()) {
+				session.setAttribute("uid",rs.getInt("uid"));
 				if (rs.getInt("admin") == 0) {
-					// 重定向和传参
+					// 重定向
 					request.setAttribute("username", username);
 					request.getRequestDispatcher("/e_shop.jsp").forward(request, response);
 				}

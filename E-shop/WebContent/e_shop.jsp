@@ -1,5 +1,13 @@
-<%@page import="java.util.Date"%>
-<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="DBTool.DBUtil"%>
+<%@page import="DBTool.Goods"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="java.io.IOException"%>
+<%@page import="java.io.PrintWriter"%>
+<%@page import="java.net.URLEncoder"%>
+<%@page import="java.sql.Connection"%>
+<%@page import="java.sql.ResultSet"%>
+<%@page import="java.sql.Statement"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -10,6 +18,12 @@
 <meta charset="utf-8">
 <title>电子商城</title>
 <link rel="stylesheet" href="./css/eshop.css" type="text/css">
+<link rel="stylesheet" href="./css/common.css" type="text/css">
+<script >
+function testButton(){
+	window.location="shopping_cart.jsp";
+}
+</script>
 
 <script type="text/javascript" src="js/index/scrolltext.js"></script>
 <script type="text/javascript" src="js/index/jquery.min.js"></script>
@@ -21,19 +35,62 @@
 <script type="text/javascript" src="js/index/jquery.scrollTo.js"></script>
 </head>
 <body>
-	<div id="wrap" class="clearfix">
+	<%
+		List<Goods> goodsList = new ArrayList<Goods>();
+	try {
+		Connection conn = DBUtil.getConnection();
+		Statement st = conn.createStatement();
+		String sql = "select* from goods";
+		ResultSet rs = st.executeQuery(sql);
+		while (rs.next()) {
+			/* System.out.print("找到！！"); */
+			Goods g = new Goods();
+			g.setGid(rs.getInt("gid"));
+			g.setName(rs.getString("name"));
+			g.setPrice(rs.getFloat("price"));
+			g.setQuantity(rs.getInt("quantity"));
+			g.setLink(rs.getString("link"));
+			goodsList.add(g);
+		}
+	} catch (Exception ex) {
+		ex.printStackTrace();
+	} finally {
+		DBUtil.Close();
+	}
+	%>
+	<div id="wrap">
 		<header id="header">
 			<div class="row">
 				<img src="images/logo.jpg" alt="lsy电子商城" class="logo">
+				<%
+					if (session.getAttribute("username") != null) {
+				%>
+				<div class="hello">Hello</div>
+
+				<div class="username"><%=session.getAttribute("username")%></div>
+				<div class="hello">! Welcome to Lsy E-shop</div>
+				<%
+					}
+				%>
+				<%
+					if (session.getAttribute("username") == null) {
+				%>
+				<div class="hello">Hello</div>
+				<div class="hello">
+					<a href=login.jsp>请先登录</a>
+				</div>
+				<%
+					}
+				%>
 				<div class="fr">
-					<div class="search_text">搜索商品</div>
 					<div class="head_search">
-						<input id="keywords" type="text" class="head_form" value=""
+						<input id="keywords" type="text" class="head_input" value=""
 							placeholder="输入关键字" onkeydown="if(event.keyCode==13){search();}">
 						<button type="button" class="head_search_btn" id="search">
 						</button>
 					</div>
 				</div>
+				<div class="search_text">搜索商品</div>
 			</div>
 		</header>
 		<!-- banner -->
@@ -42,110 +99,45 @@
 		<section id="recommend">
 			<div class="row">
 				<div class="rec_title">
+					<button type="button" onclick="testButton()" class="button fr mr50">查看购物车</button>
 					<img src="images/recommend_title.png" width="161" height="35">
 					<br> best sales Recommend
 				</div>
 				<ul class="rec_list">
-					<li>
-						<div class="rec_pic">
-							<img src="images/g1.jpg" data-original="#" width="220"
-								height="220">
-						</div>
-						<div class="rec_title2">
-							<a href="javascript:void(0);" title="OPPO R9	全网通 手机"> OPPO R9
-								全网通 手机</a>
-						</div>
-						<div class="rec_tag">售价 ¥2999</div>
-					</li>
 
+					<%
+						for (int i = 0; i < goodsList.size() && goodsList.get(i).getQuantity() != 0; i++) {
+					%>
 					<li>
 						<div class="rec_pic">
-							<img src="images/g2.jpg" data-original="#" width="220"
-								height="220">
+							<%
+								out.print("<img src='" + goodsList.get(i).getLink() + "'width='220' height='220'>");
+							%>
 						</div>
 						<div class="rec_title2">
-							<a href="javascript:void(0);" title="魅族 MEIZU  魅蓝note2 联通版 手机">
-								魅族 MEIZU 魅蓝note2 </a>
+							<b> <%=goodsList.get(i).getName()%>
+							</b>
 						</div>
-						<div class="rec_tag">售价 ¥1099</div>
+						<div class="rec_tag">
+							售价 ¥<%=goodsList.get(i).getPrice()%></div>
+						<form action=" ${pageContext.request.contextPath}/eshop_servlet"
+							method="post" class="form_sub">
+							<%
+							out.print("<input type='hidden' name='gid' value='" + goodsList.get(i).getGid() + "'>");
+							out.print("<input type='hidden' name='quantity' value='" + goodsList.get(i).getQuantity() + "'>");
+							%>
+							<input type="submit" name="submit" value="加入购物车">
+						</form>
 					</li>
+					<%
+						}
+					%>
 
-					<li>
-						<div class="rec_pic">
-							<img src="images/g3.jpg" data-original="#" width="220"
-								height="220">
-						</div>
-						<div class="rec_title2">
-							<a href="javascript:void(0);" title="魅族 MEIZU  MX5 PRO 公开版 手机">
-								魅族 MEIZU MX5 PRO </a>
-						</div>
-						<div class="rec_tag">售价 ¥2899</div>
-					</li>
-
-					<li>
-						<div class="rec_pic">
-							<img src="images/g4.jpg" data-original="#" width="220"
-								height="220">
-						</div>
-						<div class="rec_title2">
-							<a href="javascript:void(0);" title="华为 HUAWEI 荣耀X2 移动联通版 平板电脑">
-								华为 HUAWEI 荣耀X2 移动联 </a>
-						</div>
-						<div class="rec_tag">售价 ¥1988</div>
-					</li>
-
-					<li>
-						<div class="rec_pic">
-							<img src="images/g5.jpg" data-original="#" width="220"
-								height="220">
-						</div>
-						<div class="rec_title2">
-							<a href="javascript:void(0);" title="华为 HUAWEI 荣耀 7I   移动版 手机">
-								华为 HUAWEI 荣耀 7I </a>
-						</div>
-						<div class="rec_tag">售价 ¥1699</div>
-					</li>
-
-					<li>
-						<div class="rec_pic">
-							<img src="images/g6.jpg" data-original="#" width="220"
-								height="220">
-						</div>
-						<div class="rec_title2">
-							<a href="javascript:void(0);" title="华硕笔记本电脑 轻薄本 2020新款">
-								华硕笔记本电脑 轻薄本 2020新款 </a>
-						</div>
-						<div class="rec_tag">售价 ¥5580</div>
-					</li>
-
-					<li>
-						<div class="rec_pic">
-							<img src="images/g7.jpg" data-original="#" width="220"
-								height="220">
-						</div>
-						<div class="rec_title2">
-							<a href="javascript:void(0);" title="新品笔记本电脑 新款绿色清新版">
-								新品笔记本电脑 新款绿色清新版</a>
-						</div>
-						<div class="rec_tag">售价 ¥5380</div>
-					</li>
-
-					<li>
-						<div class="rec_pic">
-							<img src="images/g8.jpg" data-original="#" width="220"
-								height="220">
-						</div>
-						<div class="rec_title2">
-							<a href="javascript:void(0);" title="二手旧款iPad 八成新"> 二手旧款iPad
-								八成新</a>
-						</div>
-						<div class="rec_tag">售价 ¥2499</div>
-					</li>
 				</ul>
 			</div>
 		</section>
 		<!-- 商品信息 end -->
-
+		<h1>&nbsp;</h1>
 		<footer id="footer">
 			<div class="row">
 				<ul class="foot_service">
