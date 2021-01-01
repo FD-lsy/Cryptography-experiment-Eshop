@@ -8,35 +8,31 @@
 <%@page import="java.sql.Connection"%>
 <%@page import="java.sql.ResultSet"%>
 <%@page import="java.sql.Statement"%>
+<%@page import="encrypt.Key"%>
+<%@page import="encrypt.RSA"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
-
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <title>电子商城</title>
 <link rel="stylesheet" href="./css/eshop.css" type="text/css">
 <link rel="stylesheet" href="./css/common.css" type="text/css">
-<script >
-function testButton(){
-	window.location="shopping_cart.jsp";
-}
-</script>
+<script>
+	function testButton() {
+		window.location = "shopping_cart.jsp";
 
-<script type="text/javascript" src="js/index/scrolltext.js"></script>
-<script type="text/javascript" src="js/index/jquery.min.js"></script>
-<script type="text/javascript" src="js/index/jquery.cookie.js"></script>
-<script type="text/javascript" src="js/index/juzi.cookie.js"></script>
-<script type="text/javascript" src="js/index/juzi.js"></script>
-<script type="text/javascript" src="js/index/zdc.js"></script>
-<script type="text/javascript" src="js/index/banner.js"></script>
-<script type="text/javascript" src="js/index/jquery.scrollTo.js"></script>
+	}
+</script>
 </head>
 <body>
 	<%
 		List<Goods> goodsList = new ArrayList<Goods>();
+	//num是String类型的八位序列号
+	String num = Key.genString();
+	session.setAttribute("num", num);
 	try {
 		Connection conn = DBUtil.getConnection();
 		Statement st = conn.createStatement();
@@ -50,7 +46,9 @@ function testButton(){
 			g.setPrice(rs.getFloat("price"));
 			g.setQuantity(rs.getInt("quantity"));
 			g.setLink(rs.getString("link"));
-			goodsList.add(g);
+			if(g.getQuantity()!=0){
+				goodsList.add(g);
+			}
 		}
 	} catch (Exception ex) {
 		ex.printStackTrace();
@@ -100,8 +98,8 @@ function testButton(){
 			<div class="row">
 				<div class="rec_title">
 					<button type="button" onclick="testButton()" class="button fr mr50">查看购物车</button>
-					<img src="images/recommend_title.png" width="161" height="35">
-					<br> best sales Recommend
+					<img src="images/recommend_title.png" class="img" width="161"
+						height="35"> <br> best sales Recommend
 				</div>
 				<ul class="rec_list">
 
@@ -120,11 +118,14 @@ function testButton(){
 						</div>
 						<div class="rec_tag">
 							售价 ¥<%=goodsList.get(i).getPrice()%></div>
-						<form action=" ${pageContext.request.contextPath}/eshop_servlet"
+						<form action="${pageContext.request.contextPath}/eshop_servlet"
 							method="post" class="form_sub">
 							<%
-							out.print("<input type='hidden' name='gid' value='" + goodsList.get(i).getGid() + "'>");
-							out.print("<input type='hidden' name='quantity' value='" + goodsList.get(i).getQuantity() + "'>");
+								out.print("<input type='hidden' name='engid' value='"
+									+ RSA.encrypt(goodsList.get(i).getGid() + "", Key.getMyPublicKey()) + "'>");
+							out.print("<input type='hidden' name='enquantity' value='"
+									+ RSA.encrypt(goodsList.get(i).getQuantity() + "", Key.getMyPublicKey()) + "'>");
+							out.print("<input type='hidden' name='ennum' value='" + RSA.encrypt(num, Key.getMyPublicKey()) + "'>");
 							%>
 							<input type="submit" name="submit" value="加入购物车">
 						</form>
@@ -138,88 +139,31 @@ function testButton(){
 		</section>
 		<!-- 商品信息 end -->
 		<h1>&nbsp;</h1>
-		<footer id="footer">
-			<div class="row">
-				<ul class="foot_service">
-					<li class="s1">卓越品质 <br> <span class="font14 font_grey">
-							100%正品保障 </span>
-					</li>
-					<li class="s2">金牌服务 <br> <span class="font14 font_grey">
-							为您呈现最优服务 </span>
-					</li>
-					<li class="s3">手续简单 <br> <span class="font14 font_grey">
-							专业人员上门办理 </span>
-					</li>
-					<li class="s4">轻松还款 <br> <span class="font14 font_grey">
-							足不出户轻松还款 </span>
-					</li>
-					<li class="s5">专业配送 <br> <span class="font14 font_grey">
-							快速安全 </span>
-					</li>
-				</ul>
-			</div>
-		</footer>
+		<%
+			out.print("<footer id='footer' style='padding-top:" + ((goodsList.size()-1)/4+1) * 320 + "px'>");
+		%>
+		<div class="row">
+			<ul class="foot_service">
+				<li class="s1">卓越品质 <br> <span class="font14 font_grey">
+						100%正品保障 </span>
+				</li>
+				<li class="s2">金牌服务 <br> <span class="font14 font_grey">
+						为您呈现最优服务 </span>
+				</li>
+				<li class="s3">手续简单 <br> <span class="font14 font_grey">
+						专业人员上门办理 </span>
+				</li>
+				<li class="s4">轻松还款 <br> <span class="font14 font_grey">
+						足不出户轻松还款 </span>
+				</li>
+				<li class="s5">专业配送 <br> <span class="font14 font_grey">
+						快速安全 </span>
+				</li>
+			</ul>
+		</div>
+		<%
+			out.print("</footer>");
+		%>
 	</div>
-	<script>
-		$(function() {
-			//代码初始化
-			var size = $('.rotaion_list li').size();
-			for (var i = 2; i <= size; i++) {
-				var li = "<span>" + i + "</span >";
-				$('.yx-rotation-focus').append(li);
-			}
-			;
-			//手动控制轮播图
-			$('.rotaion_list li').eq(0).show();
-			$('.yx-rotation-focus span').eq(0).addClass('hover');
-			$('.yx-rotation-focus span').mouseover(
-					function() {
-						$(this).addClass('hover').siblings().removeClass(
-								'hover');
-						var index = $(this).index();
-						i = index;
-						$('.rotaion_list li').eq(index).stop().fadeIn(300)
-								.siblings().stop().fadeOut(300);
-					})
-			//自动播放
-			var i = 0;
-			var t = setInterval(move, 1500);
-			//自动播放核心函数
-			function move() {
-				i++;
-				if (i == size) {
-					i = 0;
-				}
-				$('.yx-rotation-focus span').eq(i).addClass('hover').siblings()
-						.removeClass('hover');
-				$('.rotaion_list li').eq(i).fadeIn(300).siblings().fadeOut(300);
-			}
-
-			//向右播放核心函数
-			function moveL() {
-				i--;
-				if (i == -1) {
-					i = size - 1;
-				}
-				$('.yx-rotation-focus span').eq(i).addClass('hover').siblings()
-						.removeClass('hover');
-				$('.rotaion_list li').eq(i).fadeIn(300).siblings().fadeOut(300);
-			}
-			$('.yx-rotaion .left').click(function() {
-				moveL();
-			})
-			$('.yx-rotaion .right').click(function() {
-				move();
-			})
-			//鼠标移入移除
-			$('.yx-rotaion').hover(function() {
-				clearInterval(t);
-			}, function() {
-				t = setInterval(move, 1500);
-			})
-		})
-	</script>
-
 </body>
-
 </html>

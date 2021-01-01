@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import DBTool.DBUtil;
+import encrypt.Key;
+import encrypt.RSA;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -27,28 +29,22 @@ public class LoginServlet extends HttpServlet {
 	}
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
-	}
-
-	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String username = request.getParameter("username");
-		String password = request.getParameter("password");
-		HttpSession session = request.getSession();
-		session.setAttribute("username",username);
 		response.setContentType("text/html; charset=UTF-8");
+		String enusername = request.getParameter("enusername");
+		String enpassword = request.getParameter("enpassword");
+		HttpSession session = request.getSession();
 		PrintWriter out = response.getWriter();
 		try {
+			String password = RSA.decryptNormal(enpassword, Key.getMyPrivateKey());
+			String username = RSA.decryptNormal(enusername, Key.getMyPrivateKey());
+			session.setAttribute("username",username);
+//			System.out.println(request.getParameter("username"));
+//			System.out.println(request.getParameter("password"));
 			Connection conn = DBUtil.getConnection();
 			Statement st = conn.createStatement();
 			String sql = "select * from database.user where username='" + username + "' and password='" + password

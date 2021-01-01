@@ -8,6 +8,8 @@
 <%@page import="java.sql.Connection"%>
 <%@page import="java.sql.ResultSet"%>
 <%@page import="java.sql.Statement"%>
+<%@page import="encrypt.Key"%>
+<%@page import="encrypt.RSA"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -23,26 +25,15 @@
 	function testButton() {
 		window.location = "e_shop.jsp";
 	}
-	function confirm() {
-		window.location = "";
-	}
 </script>
-
-<script type="text/javascript" src="js/index/scrolltext.js"></script>
-<script type="text/javascript" src="js/index/jquery.min.js"></script>
-<script type="text/javascript" src="js/index/jquery.cookie.js"></script>
-<script type="text/javascript" src="js/index/juzi.cookie.js"></script>
-<script type="text/javascript" src="js/index/juzi.js"></script>
-<script type="text/javascript" src="js/index/zdc.js"></script>
-<script type="text/javascript" src="js/index/banner.js"></script>
-<script type="text/javascript" src="js/index/jquery.scrollTo.js"></script>
-</head>
 <body>
 	<%
 		List<Goods> goodsList = new ArrayList<Goods>();
-	if (session.getAttribute("uid") == null) {
-		out.print("<a href='login.jsp'>请登录！</a>");
-	} else {
+	//num是String类型的八位序列号
+	String order = Key.genString();
+	session.setAttribute("order", order);
+	float amount = 0;
+	if (session.getAttribute("uid") != null) {
 		List<Integer> id = new ArrayList<Integer>();
 		List<Integer> num = new ArrayList<Integer>();
 		int uid = (int) session.getAttribute("uid");
@@ -70,9 +61,12 @@
 			g.setQuantity(rs.getInt("quantity"));
 			g.setLink(rs.getString("link"));
 		}
-		goodsList.add(g);
-			}
+		amount += g.getNumber() * g.getPrice();
+		if (g.getNumber() > 0) {
+			goodsList.add(g);
+		}
 
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
@@ -119,7 +113,7 @@
 				<ul class="rec_list">
 
 					<%
-						for (int i = 0; i < goodsList.size() && goodsList.get(i).getNumber() > 0; i++) {
+						for (int i = 0; i < goodsList.size(); i++) {
 					%>
 					<li>
 						<div class="rec_pic">
@@ -139,9 +133,13 @@
 						<form action=" ${pageContext.request.contextPath}/cart_servlet"
 							method="post" class="form_sub">
 							<%
-								out.print("<input type='hidden' name='gid' value='" + goodsList.get(i).getGid() + "'>");
-							out.print("<input type='hidden' name='number' value='" + goodsList.get(i).getNumber() + "'>");
-							out.print("<input type='hidden' name='quantity' value='" + goodsList.get(i).getQuantity() + "'>");
+								out.print("<input type='hidden' name='engid' value='"
+									+ RSA.encrypt(goodsList.get(i).getGid() + "", Key.getMyPublicKey()) + "'>");
+							out.print("<input type='hidden' name='ennumber' value='"
+									+ RSA.encrypt(goodsList.get(i).getNumber() + "", Key.getMyPublicKey()) + "'>");
+							out.print("<input type='hidden' name='enquantity' value='"
+									+ RSA.encrypt(goodsList.get(i).getQuantity() + "", Key.getMyPublicKey()) + "'>");
+							out.print("<input type='hidden' name='enorder' value='" + RSA.encrypt(order, Key.getMyPublicKey()) + "'>");
 							%>
 							<input type="submit" name="submit" value="移出购物车">
 						</form>
@@ -153,11 +151,23 @@
 			</div>
 		</section>
 		<!-- 商品信息 end -->
-		<footer id="footer">
-			<div class="row">
-				<button type="button" onclick="confirm()" class="back">确认支付</button>
-			</div>
-		</footer>>
+		<%
+			out.print("<footer id='footer' style='padding-top:" + ((goodsList.size()-1) / 4 + 1) * 350 + "px'>");
+		%>
+		<div class="row">
+			<h2 class="center">
+				总金额为：<%=amount%>￥</h2>
+			<form action=" ${pageContext.request.contextPath}/send_m_servlet"
+				method="post">
+				<%
+					out.print("<input type='hidden' name='amount' value='" + amount + "'>");
+				%>
+				<input type="submit" class="submit" name="submit" value="确认支付">
+			</form>
+		</div>
+		<%
+			out.print("</footer>");
+		%>
 	</div>
 </body>
 </html>

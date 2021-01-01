@@ -7,7 +7,10 @@
 .fr {
 	float: right;
 }
-
+.center{
+	text-align:center;
+	margin-bottom:30px;
+}
 #wrap {
 	min-width: 1200px;
 	margin-left: auto;
@@ -19,6 +22,10 @@
 	width: 1200px;
 	margin-left: auto;
 	margin-right: auto;
+}
+
+.mr50{
+	margin-right:50px;
 }
 
 /*-------------------header-------------------*/
@@ -119,6 +126,10 @@
 	padding-bottom: 100px;
 }
 
+#recommend .img{
+	margin-left:185px;
+}
+
 #recommend .rec_list {
 	padding-right: 8px;
 	padding-left: 8px;
@@ -178,10 +189,11 @@
 	color: #FF9346;
 	text-align: center;
 	height: 75px;
-	margin-top: 10px;margin-left: 300px;margin-right: 300px;
+	margin-top: 10px;
 	text-transform: uppercase;
 	font-family: Georgia, "Times New Roman", Times, serif;
 	line-height: 1.5em;
+	
 }
 
 #recommend .rec_title2 {
@@ -212,12 +224,6 @@
 
 #recommend .rec_title2 b:hover {
 	color: #FFBB31;
-}
-
-#recommend .rec_list {
-	padding-right: 8px;
-	padding-left: 8px;
-	margin-bottom: 90px;
 }
 
 #recommend .rec_pic {
@@ -299,8 +305,6 @@
   cursor: pointer;
 /* Just for presentation */  
   display: block;
-  margin: 0 auto;
-  margin-right:50px;
 }
 #recommend button:active {
   box-shadow: 0px 2px 0px 0px rgba(0,0,0,.2);
@@ -349,7 +353,6 @@
 #footer {
 	margin-top: auto;
 	background-color: #FFF;
-	padding-top: 600px;
 	padding-bottom: auto;
 	border-top-width: 1px;
 	border-top-style: solid;
@@ -373,29 +376,57 @@
 #footer .foot_service li.s1 {
 	background-image: url(../images/foot_service.gif);
 	background-repeat: no-repeat;
-	background-position: left center;
+	background-position: left bottom;
 }
 
 #footer .foot_service li.s2 {
 	background-image: url(../images/foot_service2.gif);
 	background-repeat: no-repeat;
-	background-position: left center;
+	background-position: left bottom;
 }
 
 #footer .foot_service li.s3 {
 	background-image: url(../images/foot_service3.gif);
 	background-repeat: no-repeat;
-	background-position: left center;
+	background-position: left bottom;
 }
 
 #footer .foot_service li.s4 {
 	background-image: url(../images/foot_service4.gif);
 	background-repeat: no-repeat;
-	background-position: left center;
+	background-position: left bottom;
 }
 
 #footer .foot_service li.s5 {
 	background-image: url(../images/foot_service5.gif);
 	background-repeat: no-repeat;
-	background-position: left center;
+	background-position: left bottom;
 }
+/* General Buttons */
+#footer .submit {
+  width: 130px;
+  height: 40px;
+  background: linear-gradient(to bottom, #4eb5e5 0%,#389ed5 100%); /* W3C */
+  border: none;
+  border-radius: 5px;
+  position: relative;
+  border-bottom: 4px solid #2b8bc6;
+  color: #fbfbfb;
+  font-weight: 600;
+  font-family: 'Open Sans', sans-serif;
+  text-shadow: 1px 1px 1px rgba(0,0,0,.4);
+  font-size: 15px;
+  text-align: center;
+  text-indent: 5px;
+  box-shadow: 0px 3px 0px 0px rgba(0,0,0,.2);
+  cursor: pointer;
+/* Just for presentation */  
+  display: block;
+  margin:auto;
+  margin-bottom:50px;
+}
+#footer .submit:active {
+  box-shadow: 0px 2px 0px 0px rgba(0,0,0,.2);
+  top: 1px;
+}
+

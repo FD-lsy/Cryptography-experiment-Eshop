@@ -25,17 +25,19 @@
 					<span>用户名不能为空</span>
 				</div>
 				<div class="form_text_ipt">
-					<input name="password" type="password" placeholder="密码">
+					<input name="password" type="password" id="password" placeholder="密码">
 				</div>
 				<div class="ececk_warning">
 					<span>密码不能为空</span>
 				</div>
 				<div class="form_text_ipt">
-					<input name="repassword" type="password" placeholder="重新输入密码">
+					<input name="repassword" type="password" id="repassword" placeholder="重新输入密码">
 				</div>
 				<div class="ececk_warning">
 					<span>密码不能为空</span>
 				</div>
+				<input name="enpassword" type="hidden" id="enpassword" value="">
+				<input name="enusername" type="hidden" id="enusername" value="">
 				<div class="form_btn">
 					<input type="submit" name="submit" value="注册">
 				</div>
@@ -48,11 +50,6 @@
 	<script type="text/javascript" src="js/jquery.min.js"></script>
 	<script type="text/javascript" src="js/common.js"></script>
 	<script type="text/javascript" src="js/register.js"></script>
-	<script type="text/javascript">
-		function checkcode() {
-			img.src = img.src + '?' + Math.random();
-		}
-	</script>
-	<div style="text-align: center;"></div>
+	<script type="text/javascript" src="js/jsencrypt.js"></script>
 </body>
 </html>

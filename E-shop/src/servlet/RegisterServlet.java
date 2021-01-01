@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import DBTool.DBUtil;
+import encrypt.Key;
+import encrypt.RSA;
 
 @WebServlet(name = "register_servlet", urlPatterns = { "/register_servlet" })
 public class RegisterServlet extends HttpServlet {
@@ -27,14 +29,14 @@ public class RegisterServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
-		// 向服务器发送请求获取到参数
-		String username = request.getParameter("username");
-		String password = request.getParameter("password");
 		try {
+			String username = RSA.decryptNormal(request.getParameter("enusername"), Key.getMyPrivateKey());
+			String password = RSA.decryptNormal(request.getParameter("enpassword"), Key.getMyPrivateKey());
+//			System.out.println(request.getParameter("username"));
+//			System.out.println(request.getParameter("password"));
 			Connection conn = DBUtil.getConnection();
 			Statement st = conn.createStatement();
 			String sql = "select * from database.user where username='" + username + "'";

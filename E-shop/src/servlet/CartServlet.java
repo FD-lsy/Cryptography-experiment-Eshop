@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import DBTool.DBUtil;
+import encrypt.Key;
+import encrypt.RSA;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -40,42 +42,56 @@ public class CartServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		PrintWriter out = response.getWriter();
-		String gid1 = request.getParameter("gid");
-		int gid = Integer.parseInt(gid1);
-		String number1 = request.getParameter("number");
-		int number = Integer.parseInt(number1);
-		String quantity1 = request.getParameter("quantity");
-		int quantity = Integer.parseInt(quantity1);
-
 		HttpSession session = request.getSession();
-		if (session.getAttribute("username") == null) {
-			String a = URLEncoder.encode("请先登录！", "UTF-8");
-			out.print("<script>alert(decodeURIComponent('" + a + "') );window.location.href='login.jsp'</script>");
-			out.flush();
-			out.close();
-		} else {
-			int uid = (int) session.getAttribute("uid");
-			response.setContentType("text/html; charset=UTF-8");
-			try {
-				Connection conn = DBUtil.getConnection();
-				Statement st = conn.createStatement();
-				// 将shoppingcart表的uid、gid行number减一
-				String sql = "update shoppingcart set number=" + (number - 1) + " where gid=" + gid + " and uid="
-						+ uid;
-				st.execute(sql);
-
-				// 将goods表的gid库存加一
-				String sql1 = "update goods set quantity=" + (quantity + 1) + " where gid = " + gid;
-				st.execute(sql1);
-				String a = URLEncoder.encode("移出购物车成功!", "UTF-8");
-				out.print("<script>alert(decodeURIComponent('" + a + "') );window.location.href='shopping_cart.jsp'</script>");
+		String orderSession = (String) session.getAttribute("order");
+		int uid = (int) session.getAttribute("uid");
+		try {
+			//解密得到序列号order、商品的gid、库存number、购物车中该商品的数量quantity
+			String order = RSA.decrypt(request.getParameter("enorder"), Key.getMyPrivateKey());
+			String gid1 = RSA.decrypt(request.getParameter("engid"), Key.getMyPrivateKey());
+			int gid = Integer.parseInt(gid1);
+			String number1 = RSA.decrypt(request.getParameter("ennumber"), Key.getMyPrivateKey());
+			int number = Integer.parseInt(number1);
+			String quantity1 = RSA.decrypt(request.getParameter("enquantity"), Key.getMyPrivateKey());
+			int quantity = Integer.parseInt(quantity1);
+			if (session.getAttribute("username") == null) {
+				String a = URLEncoder.encode("请先登录！", "UTF-8");
+				out.print("<script>alert(decodeURIComponent('" + a + "') );window.location.href='login.jsp'</script>");
 				out.flush();
 				out.close();
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			} finally {
-				DBUtil.Close();
 			}
+			//序列号和session中序列号相同，其实从session中获得uid和username已经可以放重放攻击，增加序列号多一层保障
+			else if (order.equals(orderSession)) {
+				if (number == 0) {
+					//不会出现此情况，以防万一还是写上
+					String a = URLEncoder.encode("购物车暂无该商品！", "UTF-8");
+					out.print("<script>alert(decodeURIComponent('" + a
+							+ "') );window.location.href='shopping_cart.jsp'</script>");
+					out.flush();
+					out.close();
+				} else {
+					response.setContentType("text/html; charset=UTF-8");
+					Connection conn = DBUtil.getConnection();
+					Statement st = conn.createStatement();
+					// 将shoppingcart表的uid、gid行number减一
+					String sql = "update shoppingcart set number=" + (number - 1) + " where gid=" + gid + " and uid="
+							+ uid;
+					st.execute(sql);
+
+					// 将goods表的gid库存加一
+					String sql1 = "update goods set quantity=" + (quantity + 1) + " where gid = " + gid;
+					st.execute(sql1);
+					String a = URLEncoder.encode("移出购物车成功!", "UTF-8");
+					out.print("<script>alert(decodeURIComponent('" + a
+							+ "') );window.location.href='shopping_cart.jsp'</script>");
+					out.flush();
+					out.close();
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			DBUtil.Close();
 		}
 	}
 }
