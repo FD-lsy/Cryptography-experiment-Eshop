@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 import DBTool.DBUtil;
 import encrypt.Key;
 import encrypt.RSA;
@@ -23,7 +25,7 @@ import java.sql.Statement;
 @WebServlet(name = "login_servlet", urlPatterns = { "/login_servlet" })
 public class LoginServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+	Logger logger=Logger.getLogger(LoginServlet.class);
 	public LoginServlet() {
 		super();
 	}
@@ -54,12 +56,14 @@ public class LoginServlet extends HttpServlet {
 			if (rs.next()) {
 				session.setAttribute("uid",rs.getInt("uid"));
 				if (rs.getInt("admin") == 0) {
+					logger.info("uid为"+rs.getString("uid")+"的普通用户登录成功，进入商城页面。");
 					// 重定向
 					request.setAttribute("username", username);
 					request.getRequestDispatcher("/e_shop.jsp").forward(request, response);
 				}
 				// 用户存在且为管理员
 				else if (rs.getInt("admin") == 1) {
+					logger.info("uid为"+rs.getString("uid")+"的管理员登录成功，进入管理员页面。");
 					String a = URLEncoder.encode("您将进入管理员页面", "UTF-8");
 					out.print("<script>alert(decodeURIComponent('" + a
 							+ "') );window.location.href='admin.jsp'</script>");

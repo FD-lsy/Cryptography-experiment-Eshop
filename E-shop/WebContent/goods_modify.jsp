@@ -42,13 +42,32 @@
 </head>
 <body>
 	<%
-		String orderAdd = Key.genString();
-	session.setAttribute("orderAdd", orderAdd);
+	String orderModify = Key.genString();
+	session.setAttribute("orderModify", orderModify);
+	String gidS = RSA.decrypt(request.getParameter("engid"), Key.getMyPrivateKey());
+	int gid = Integer.parseInt(gidS);
+	Goods g = new Goods();
+	g.setGid(gid);
+	try {
+		Connection conn = DBUtil.getConnection();
+		Statement st = conn.createStatement();
+		String sql = "select* from goods where gid="+gid;
+		ResultSet rs = st.executeQuery(sql);
+		if (rs.next()) {
+			g.setName(rs.getString("name"));
+			g.setPrice(rs.getFloat("price"));
+			g.setQuantity(rs.getInt("quantity"));
+		}
+	} catch (Exception ex) {
+		ex.printStackTrace();
+	} finally {
+		DBUtil.Close();
+	}
 	%>
 	<div class="layui-card">
 		<form class="layui-form layui-form-pane" method="post"
-			action="${pageContext.request.contextPath}/goodsadd_servlet"
-			onSubmit="return beforeSubmitAdd(this);">
+			action="${pageContext.request.contextPath}/goods_modify_servlet"
+			onSubmit="return beforeSubmitModify(this);">
 			<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
 				<ul class="layui-tab-title">
 					<li class="layui-this">商品信息</li>
@@ -59,10 +78,10 @@
 						<div class="layui-form-item">
 							<label class="layui-form-label"> <span class='x-red'>*</span>商品名称
 							</label>
-							<input type="hidden" name="enorder" value=<%=orderAdd%>>
+							<input type="hidden" name="engid" value=<%=gid%>>
+							<input type="hidden" name="enorder" value=<%=orderModify%>>
 							<div class="layui-input-block">
-								<input type="text" name="enname" autocomplete="off" value="" required="required"
-									placeholder="空制在15个汉字以内" class="layui-input">
+								<input type="text" name="enname" required="required" autocomplete="off" value='<%=g.getName()%>' class="layui-input">
 							</div>
 						</div>
 
@@ -70,8 +89,7 @@
 							<label class="layui-form-label"> <span class='x-red'>*</span>商品售价
 							</label>
 							<div class="layui-input-block">
-								<input type="text" name="enprice" autocomplete="off" value="" required="required"
-									placeholder="该商品在本店的售价" class="layui-input">
+								<input type="text" name="enprice" required="required" autocomplete="off" value=<%=g.getPrice()%> class="layui-input">
 							</div>
 						</div>
 
@@ -79,20 +97,7 @@
 							<label class="layui-form-label"> <span class='x-red'>*</span>商品库存
 							</label>
 							<div class="layui-input-block">
-								<input type="text" name="enquantity" autocomplete="off" value="" required="required"
-									placeholder="该商品本次进货量" class="layui-input">
-							</div>
-						</div>
-
-						<div class="layui-form-item">
-							<label for="link" class="layui-form-label"> <span
-								class="x-red">*</span>商品缩略图
-							</label>
-							<div class="layui-input-inline">
-								<button type="button" class="layui-btn" id="test3" onclick="$('#YYZZFBSMJ').click();">
-									<i class="layui-icon"></i>上传文件
-								</button>
-                				<input type="file" name="file" id="YYZZFBSMJ" style="display: none;" onchange="fileType(this)">
+								<input type="text" name="enquantity" required="required" autocomplete="off" value=<%=g.getQuantity()%> class="layui-input">
 							</div>
 						</div>
 

@@ -17,14 +17,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.Statement;
 
-@WebServlet(name = "goodsadd_servlet", urlPatterns = { "/goodsadd_servlet" })
-public class GoodsAddServlet extends HttpServlet {
+@WebServlet(name = "goods_modify_servlet", urlPatterns = { "/goods_modify_servlet" })
+public class GoodsModifyServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	Logger logger=Logger.getLogger(GoodsAddServlet.class);
-	public GoodsAddServlet() {
+	Logger logger=Logger.getLogger(GoodsModifyServlet.class);
+	public GoodsModifyServlet() {
 		super();
 	}
 
@@ -52,51 +51,37 @@ public class GoodsAddServlet extends HttpServlet {
 			out.close();
 		}
 		try {
-			String orderS = (String) session.getAttribute("orderAdd");
+			String orderSession = (String) session.getAttribute("orderModify");
 			String order = RSA.decryptNormal(request.getParameter("enorder"), Key.getMyPrivateKey());
-			
-//			String name = RSA.decryptNormal(request.getParameter("enname"), Key.getMyPrivateKey());
 			String name = new String(request.getParameter("enname").getBytes("iso-8859-1"), "utf-8");
 			String priceString = RSA.decryptNormal(request.getParameter("enprice"), Key.getMyPrivateKey());
 			float price = Float.parseFloat(priceString);
-			String quantity1 = RSA.decryptNormal(request.getParameter("enquantity"), Key.getMyPrivateKey());
-			int quantity = Integer.parseInt(quantity1);
-			String link = "images\\\\"+new String(request.getParameter("file").getBytes("iso-8859-1"), "utf-8");
-//			System.out.println(link);
-			
+			String quantityS = RSA.decryptNormal(request.getParameter("enquantity"), Key.getMyPrivateKey());
+			int quantity = Integer.parseInt(quantityS);
+			String gidS = RSA.decryptNormal(request.getParameter("engid"), Key.getMyPrivateKey());
+			int gid = Integer.parseInt(gidS);
+
 			Connection conn = DBUtil.getConnection();
 			Statement st = conn.createStatement();
-			if (orderS.equals(order)) {
-				String sql = "select * from goods where name= '" + name + "'";
-				ResultSet rs = st.executeQuery(sql);
-				if (rs.next()) {
-					//添加的商品名称重复
-					String a = URLEncoder.encode("添加商品重复!", "UTF-8");
-					out.print("<script>alert(decodeURIComponent('" + a
-							+ "') );window.close();</script>");
-					out.flush();
-					out.close();
-				} else {
-					// 若没有该商品，添加该商品
-					String sql1 = "insert into goods (name,price,quantity,link) "
-							+ "values ('" + name + "'," + price + ","+quantity+",'"+link+"')";
-					st.execute(sql1);
-					logger.info("将商品(name:" + name + ",price:" + price + ",quantity:"+quantity+",link:"+link+")加入数据库。");
-					String a = URLEncoder.encode("添加商品成功!", "UTF-8");
-					out.print("<script>alert(decodeURIComponent('" + a
-							+ "') );window.close();</script>");
-					out.flush();
-					out.close();
-				}
+			if (orderSession.equals(order)) {
+				String sql = "update goods set name='" + name + "',price=" + price + ",quantity=" + quantity
+						+ " where gid=" + gid;
+				st.execute(sql);
+				logger.info("将gid为"+gid+"的商品信息修改为：(name:" + name + ",price:" + price + ",quantity:"+quantity+")");
+				String a = URLEncoder.encode("修改商品信息成功!", "UTF-8");
+				out.print("<script>alert(decodeURIComponent('" + a + "') );window.close();</script>");
+				out.flush();
+				out.close();
 			} else {
-				//操作序列号
-				String a = URLEncoder.encode("添加商品失败!", "UTF-8");
-				out.print("<script>alert(decodeURIComponent('" + a
-						+ "') );window.close();</script>");
+				// 操作序列号
+				String a = URLEncoder.encode("修改商品信息商品失败!", "UTF-8");
+				out.print("<script>alert(decodeURIComponent('" + a + "') );window.close();</script>");
 				out.flush();
 				out.close();
 			}
-		} catch (Exception ex) {
+		} catch (
+
+		Exception ex) {
 			ex.printStackTrace();
 		} finally {
 			DBUtil.Close();

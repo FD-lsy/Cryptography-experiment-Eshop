@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
 import encrypt.Key;
 import encrypt.RSA;
 
@@ -16,7 +18,7 @@ import java.net.URLEncoder;
 @WebServlet(name = "payment_servlet", urlPatterns = { "/payment_servlet" })
 public class PaymentServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+	Logger logger=Logger.getLogger(GoodsModifyServlet.class);
 	public PaymentServlet() {
 		super();
 	}
@@ -56,6 +58,7 @@ public class PaymentServlet extends HttpServlet {
 //			System.out.println(signature);
 				boolean sign = RSA.verify(payId, signature, Key.getBankPublicKey());
 				if (sign) {
+					logger.info("获得payid并对银行验签成功，跳转支付页面。");
 					response.sendRedirect(Key.getIP()+"pay/" + pid + "/");
 				} else {
 					String a = URLEncoder.encode("跳转支付页面失败！请重新登录", "UTF-8");

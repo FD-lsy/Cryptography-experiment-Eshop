@@ -26,7 +26,7 @@ public class Key {
 			+ "UFQArscNQFD1EKmHuKY0pmi2dFHhxt51YOrSu1ozBOI1u/NM4OYX4KBzhVc6o4pS"
 			+ "iej1zqBLr3iNaDE4kwIDAQAB";
 	
-	private static String ip = "http://172.20.58.131:8001/authen/";
+	private static String ip = "http://172.20.107.123" + ":8001/authen/";
 			
 	private static final String[] GENERATE_SOURCE = new String[]{"0", "1", "2", "3", "4", "5", "6", "7",
             "8", "9", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",

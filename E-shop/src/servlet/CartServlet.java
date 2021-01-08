@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 import DBTool.DBUtil;
 import encrypt.Key;
 import encrypt.RSA;
@@ -20,7 +22,7 @@ import java.sql.Statement;
 @WebServlet(name = "cart_servlet", urlPatterns = { "/cart_servlet" })
 public class CartServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+	Logger logger=Logger.getLogger(CartServlet.class);
 	public CartServlet() {
 		super();
 	}
@@ -81,6 +83,7 @@ public class CartServlet extends HttpServlet {
 					// 将goods表的gid库存加一
 					String sql1 = "update goods set quantity=" + (quantity + 1) + " where gid = " + gid;
 					st.execute(sql1);
+					logger.info("将uid为"+uid+"的用户购物车中gid为"+gid+"的商品数量减一，该商品库存加一。");
 					String a = URLEncoder.encode("移出购物车成功!", "UTF-8");
 					out.print("<script>alert(decodeURIComponent('" + a
 							+ "') );window.location.href='shopping_cart.jsp'</script>");

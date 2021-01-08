@@ -140,7 +140,7 @@
 		<!-- 商品信息 end -->
 		<h1>&nbsp;</h1>
 		<%
-			out.print("<footer id='footer' style='padding-top:" + ((goodsList.size()-1)/4+1) * 320 + "px'>");
+			out.print("<footer id='footer' style='padding-top:" + ((goodsList.size()-1)/4+1) * 340 + "px'>");
 		%>
 		<div class="row">
 			<ul class="foot_service">

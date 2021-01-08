@@ -23,10 +23,7 @@
 <link rel="stylesheet" href="./css/common.css" type="text/css">
 <script>
 	function testButton() {
-		window.location = "e_shop.jsp";
-	}
-	function testButton1() {
-		window.location = "purchased.jsp";
+		window.location = "shopping_cart.jsp";
 	}
 </script>
 <body>
@@ -37,26 +34,39 @@
 	session.setAttribute("order", order);
 	float amount = 0;
 	if (session.getAttribute("uid") != null) {
-		List<Integer> id = new ArrayList<Integer>();
+		List<Integer> gid = new ArrayList<Integer>();
 		List<Integer> num = new ArrayList<Integer>();
-		int uid = (int) session.getAttribute("uid");
+ 		int uid = (int) session.getAttribute("uid");
 		try {
 			int i = 0;
 			Connection conn = DBUtil.getConnection();
 			Statement st = conn.createStatement();
-			String sql = "select* from shoppingcart where uid=" + uid;
+			String sql = "select* from completedorder where uid=" + uid;
 			ResultSet rs = st.executeQuery(sql);
 			while (rs.next()) {
-		id.add(rs.getInt("gid"));
-		num.add(rs.getInt("number"));
-		Goods g = new Goods();
-		i++;
+				int flag =0;
+				int num1 = rs.getInt("number");
+				int gid1 = rs.getInt("gid");
+				if(gid1!=-1){
+					for (i = 0; i < gid.size(); i++) {
+						if(gid1 == gid.get(i)){
+							num.set(i,num1 + num.get(i));
+							flag = 1;
+						}
+					}
+					if(flag == 0){
+						gid.add(rs.getInt("gid"));
+						num.add(rs.getInt("number"));
+					}
+					i++;
+				}
 			}
-			for (i = 0; i < id.size(); i++) {
+			
+			for (i = 0; i < gid.size(); i++) {
 		Goods g = new Goods();
-		g.setGid(id.get(i));
+		g.setGid(gid.get(i));
 		g.setNumber(num.get(i));
-		String sql1 = "select* from goods where gid=" + id.get(i);
+		String sql1 = "select* from goods where gid=" + gid.get(i);
 		rs = st.executeQuery(sql1);
 		if (rs.next()) {
 			g.setName(rs.getString("name"));
@@ -87,7 +97,7 @@
 				<div class="hello">Hello</div>
 
 				<div class="username"><%=session.getAttribute("username")%></div>
-				<div class="hello">! 您的购物车界面：</div>
+				<div class="hello">! 您的已购买商品：</div>
 				<%
 					}
 				%>
@@ -109,11 +119,10 @@
 		<section id="recommend">
 			<div class="row">
 				<div class="rec_title_c">
-					<button type="button" onclick="testButton()" class="back fr mr50">返回购物页面
+					<button type="button" onclick="testButton()" class="back fr mr50">返回购物车页面
 					</button>
-					Your Shopping Cart!
+					Your Purchased Goods!
 				</div>
-				<button type="button" onclick="testButton1()" class="button fr mr50 mt50">查看已购买商品</button>
 				<ul class="rec_list">
 
 					<%
@@ -130,23 +139,8 @@
 							</b>
 						</div>
 						<div class="rec_tag_c">
-							价格 ¥<%=goodsList.get(i).getPrice()%>
-							× 数量
-							<%=goodsList.get(i).getNumber()%>
+							价格 ¥<%=goodsList.get(i).getPrice()%>&nbsp&nbsp&nbsp&nbsp&nbsp数量<%=goodsList.get(i).getNumber()%>
 						</div>
-						<form action=" ${pageContext.request.contextPath}/cart_servlet"
-							method="post" class="form_sub">
-							<%
-								out.print("<input type='hidden' name='engid' value='"
-									+ RSA.encrypt(goodsList.get(i).getGid() + "", Key.getMyPublicKey()) + "'>");
-							out.print("<input type='hidden' name='ennumber' value='"
-									+ RSA.encrypt(goodsList.get(i).getNumber() + "", Key.getMyPublicKey()) + "'>");
-							out.print("<input type='hidden' name='enquantity' value='"
-									+ RSA.encrypt(goodsList.get(i).getQuantity() + "", Key.getMyPublicKey()) + "'>");
-							out.print("<input type='hidden' name='enorder' value='" + RSA.encrypt(order, Key.getMyPublicKey()) + "'>");
-							%>
-							<input type="submit" name="submit" value="移出购物车">
-						</form>
 					</li>
 					<%
 						}
@@ -155,23 +149,6 @@
 			</div>
 		</section>
 		<!-- 商品信息 end -->
-		<%
-			out.print("<footer id='footer' style='padding-top:" + ((goodsList.size()-1) / 4 + 1) * 350 + "px'>");
-		%>
-		<div class="row">
-			<h2 class="center">
-				总金额为：<%=amount%>￥</h2>
-			<form action=" ${pageContext.request.contextPath}/send_m_servlet"
-				method="post">
-				<%
-					out.print("<input type='hidden' name='amount' value='" + amount + "'>");
-				%>
-				<input type="submit" class="submit" name="submit" value="确认支付">
-			</form>
-		</div>
-		<%
-			out.print("</footer>");
-		%>
 	</div>
 </body>
 </html>

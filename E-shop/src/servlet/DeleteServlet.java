@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 import DBTool.DBUtil;
 import encrypt.Key;
 import encrypt.RSA;
@@ -19,7 +21,7 @@ import encrypt.RSA;
 @WebServlet(name = "delete_servlet", urlPatterns = { "/delete_servlet" })
 public class DeleteServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+	Logger logger=Logger.getLogger(DeleteServlet.class);
 	public DeleteServlet() {
 		super();
 	}
@@ -42,7 +44,7 @@ public class DeleteServlet extends HttpServlet {
 		response.setContentType("text/html; charset=UTF-8");
 		PrintWriter out = response.getWriter();
 		HttpSession session = request.getSession();
-		int orderS = (int) session.getAttribute("order");
+		int orderS = (int) session.getAttribute("orderDelete");
 		try {
 			String enorderString = request.getParameter("enorder");
 			String orderString = RSA.decryptNormal(enorderString, Key.getMyPrivateKey());
@@ -55,6 +57,7 @@ public class DeleteServlet extends HttpServlet {
 				Statement st = conn.createStatement();
 				String sql = "delete from database.goods where gid=" + gid;
 				st.execute(sql);
+				logger.info("管理员将gid为"+gid+"的商品从数据库移除。");
 				String a = URLEncoder.encode("删除成功！", "UTF-8");
 				out.print("<script>alert(decodeURIComponent('" + a + "') );window.location.href='admin.jsp'</script>");
 				out.flush();

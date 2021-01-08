@@ -63,7 +63,7 @@ function deletegood(gid,order) {
 	});
 }
 
-function beforeSubmit(form) {
+function beforeSubmitAdd(form) {
 	if (form.enname.value == '') {
 		alert('商品名称不能为空！');
 		form.enname.focus();
@@ -75,12 +75,12 @@ function beforeSubmit(form) {
 		return false;
 	}
 	if (form.enprice.value == null) {
-		alert('密码不能为空！');
+		alert('价格不能为空！');
 		form.enprice.focus();
 		return false;
 	}
 	if (form.enquantity.value == null) {
-		alert('密码不能为空！');
+		alert('库存不能为空！');
 		form.enquantity.focus();
 		return false;
 	}
@@ -90,6 +90,41 @@ function beforeSubmit(form) {
 		+ "GYJPWAxZlH5fjv5G02r73LbFJLgveUIjSgykN50smt6S4+fzXg41nrp5Vasg9t9S"
 		+ "NzjjU7XTYSG+75EuJwIDAQAB";
 	encryptor.setPublicKey(publicKey);//设置公钥
+	form.enorder.value = encryptor.encrypt(form.enorder.value);
+//	form.enname.value = encryptor.encrypt(form.enname.value);
+	form.enquantity.value = encryptor.encrypt(form.enquantity.value);
+	form.enprice.value = encryptor.encrypt(form.enprice.value);
+	return true;
+}
+
+function beforeSubmitModify(form) {
+	if (form.enname.value == '') {
+		alert('商品名称不能为空！');
+		form.enname.focus();
+		return false;
+	}
+	if (form.enname.value.length > 30) {
+		alert('商品名称不能超过15格汉字，30个字符！请重新输入！');
+		form.enname.focus();
+		return false;
+	}
+	if (form.enprice.value == null) {
+		alert('价格不能为空！');
+		form.enprice.focus();
+		return false;
+	}
+	if (form.enquantity.value == null) {
+		alert('库存不能为空！');
+		form.enquantity.focus();
+		return false;
+	}
+	var encryptor = new JSEncrypt() // 创建加密对象实例
+	var publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDstiYKiePxsEJOiLskFkxwcGPC"
+		+ "SUIHE4cmO0WWzC60zRQYEkUxRauwQoVbe+6wiVgSyDn3yvezfdMja8wTPaUsPh3i"
+		+ "GYJPWAxZlH5fjv5G02r73LbFJLgveUIjSgykN50smt6S4+fzXg41nrp5Vasg9t9S"
+		+ "NzjjU7XTYSG+75EuJwIDAQAB";
+	encryptor.setPublicKey(publicKey);//设置公钥
+	form.engid.value = encryptor.encrypt(form.engid.value);
 	form.enorder.value = encryptor.encrypt(form.enorder.value);
 //	form.enname.value = encryptor.encrypt(form.enname.value);
 	form.enquantity.value = encryptor.encrypt(form.enquantity.value);

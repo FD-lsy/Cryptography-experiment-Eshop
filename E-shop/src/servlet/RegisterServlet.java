@@ -14,15 +14,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
 import DBTool.DBUtil;
 import encrypt.Key;
 import encrypt.RSA;
 
 @WebServlet(name = "register_servlet", urlPatterns = { "/register_servlet" })
 public class RegisterServlet extends HttpServlet {
-
 	private static final long serialVersionUID = 1L;
-
+	Logger logger=Logger.getLogger(RegisterServlet.class);
 	public RegisterServlet() {
 		super();
 	}
@@ -55,6 +56,7 @@ public class RegisterServlet extends HttpServlet {
 			}
 			// 用户尚未注册
 			else {
+				logger.info("用户"+username+"注册成功！");
 				st.execute(sql1);
 				String a = URLEncoder.encode("注册成功！即将进入登录页面，请重新登录", "UTF-8");
 				out.print("<script>alert(decodeURIComponent('" + a + "') );window.location.href='login.jsp'</script>");

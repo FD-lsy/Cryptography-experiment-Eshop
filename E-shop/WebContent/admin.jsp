@@ -28,20 +28,17 @@
 </head>
 <body>
 <%
-	int order = Key.genInt();
 	String gid = "-1";
-	session.setAttribute("order", order);
 	List<Goods> goodsList = new ArrayList<Goods>();
-	//num是String类型的八位序列号
-	String num = Key.genString();
-	session.setAttribute("num", num);
+	//orderDelete是String类型的八位序列号
+	int orderDelete = Key.genInt();
+	session.setAttribute("orderDelete", orderDelete);
 	try {
 		Connection conn = DBUtil.getConnection();
 		Statement st = conn.createStatement();
 		String sql = "select* from goods";
 		ResultSet rs = st.executeQuery(sql);
 		while (rs.next()) {
-			/* System.out.print("找到！！"); */
 			Goods g = new Goods();
 			g.setGid(rs.getInt("gid"));
 			g.setName(rs.getString("name"));
@@ -86,6 +83,7 @@
                         <%
 						for (int i = 0; i < goodsList.size(); i++) {
 							gid = goodsList.get(i).getGid()+"";
+							String engid = RSA.encrypt(goodsList.get(i).getGid()+"", Key.getMyPublicKey());
 						%>
 						<tr>
                             <td>
@@ -105,13 +103,13 @@
                                 <%=goodsList.get(i).getLink()%>
                             </td>
                             <td class="td-manage">
-                                <a title="编辑" href="javascript:;" onclick="xadmin.open('编辑','articletypeadd.html',)"
-                                   class="ml-5" style="text-decoration:none">
-                                    <i class="layui-icon">&#xe642;</i>
-                                </a>
-                                <%out.print("<a title='删除' href='javascript:;' onclick='deletegood("+ goodsList.get(i).getGid()+","+order+")' style='text-decoration:none'><i class='layui-icon'>&#xe640;</i></a>"); %>
-                               
-                                
+                           		<a title='编辑' href='javascript:;' onclick="xadmin.open('编辑','goods_modify.jsp?engid=<%=engid%>')"
+                           		 class='ml-5' style='text-decoration:none'>
+                            	<i class="layui-icon">&#xe642;</i>
+                            	</a>
+                             
+                            <%out.print("<a title='删除' href='javascript:;' onclick='deletegood("+ goodsList.get(i).getGid()+
+                             	","+orderDelete+")' style='text-decoration:none'><i class='layui-icon'>&#xe640;</i></a>"); %>
                             </td>
                         </tr>
                             <%

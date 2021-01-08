@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 import DBTool.DBUtil;
 import encrypt.Key;
 import encrypt.RSA;
@@ -21,7 +23,7 @@ import java.sql.Statement;
 @WebServlet(name = "eshop_servlet", urlPatterns = { "/eshop_servlet" })
 public class EshopServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+	Logger logger=Logger.getLogger(EshopServlet.class);
 	public EshopServlet() {
 		super();
 	}
@@ -94,6 +96,7 @@ public class EshopServlet extends HttpServlet {
 						String sql3 = "insert into shoppingcart(uid,gid,number) values(" + uid + "," + gid + ",1)";
 						st.execute(sql3);
 					}
+					logger.info("uid为"+uid+"的用户将gid为"+gid+"的商品加入购物车。");
 					String a = URLEncoder.encode("加入购物车成功!", "UTF-8");
 					out.print("<script>alert(decodeURIComponent('" + a
 							+ "') );window.location.href='e_shop.jsp'</script>");

@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 import DBTool.DBUtil;
 import encrypt.AES;
 import encrypt.Key;
@@ -24,6 +26,7 @@ import java.security.MessageDigest;
 @WebServlet(name = "send_m_servlet", urlPatterns = { "/send_m_servlet" })
 public class SendMServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	Logger logger=Logger.getLogger(SendMServlet.class);
 	public SendMServlet() {
 		super();
 	}
@@ -74,6 +77,7 @@ public class SendMServlet extends HttpServlet {
 			ResultSet rs = st.executeQuery(sql);
 			//如果用户存在且购物车有商品：读取用户密码，发送订单信息
 			if(rs.next()&&!amount.equals("0.0")&&uid!=0) {
+				logger.info("将订单号为"+dealid+"的订单信息发送给银行。");
 				String password = rs.getString("password");
 				//使用用户密码生成aes秘钥
 				String aes_key = AES.genAESKey(password);

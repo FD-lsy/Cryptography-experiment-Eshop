@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 import DBTool.DBUtil;
 import encrypt.Key;
 import encrypt.RSA;
@@ -23,7 +25,7 @@ import encrypt.RSA;
 @WebServlet(name = "success_servlet", urlPatterns = { "/success_servlet" })
 public class SuccessServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+	Logger logger=Logger.getLogger(SuccessServlet.class);
 	public SuccessServlet() {
 		super();
 	}
@@ -76,7 +78,6 @@ public class SuccessServlet extends HttpServlet {
 				if (gid == 0 && num == 0) {
 					String sql1 = "select * from database.shoppingcart where uid=" + uid;
 					rs = st.executeQuery(sql1);
-					// 用户存在且为普通用户
 					while (rs.next()) {
 						if(rs.getInt("number")!=0) {
 							gidList.add(rs.getInt("gid"));
@@ -102,7 +103,7 @@ public class SuccessServlet extends HttpServlet {
 						session.setAttribute("username", username);
 						session.setAttribute("uid", uid);
 					}
-					
+					logger.info("订单"+dealid+"支付成功，uid为"+uid+"的用户的购物车已清空，该用户已购买商品列表已更新。");
 					String a = URLEncoder.encode("订单支付成功，购物车已清空！", "UTF-8");
 					out.print("<script>alert(decodeURIComponent('" + a
 							+ "') );window.location.href='e_shop.jsp'</script>'</script>");

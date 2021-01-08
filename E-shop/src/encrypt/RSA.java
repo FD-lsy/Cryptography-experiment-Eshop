@@ -143,14 +143,35 @@ public class RSA {
 		return sign.verify(inputByte);
 	}
 
+	public static boolean verifyNormal(String message, String signature, String publickey) throws Exception {
+		// base64编码的公钥
+		byte[] decoded = Base64.getDecoder().decode(publickey);
+		PublicKey pubKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(decoded));
+		Signature sign = Signature.getInstance("SHA256WithRSA");
+		sign.initVerify(pubKey);
+		sign.update(message.getBytes());
+		byte[] inputByte = Base64.getDecoder().decode(signature);
+		return sign.verify(inputByte);
+	}
+	
 	public static void main(String[] args) throws Exception {
 //		long temp = System.currentTimeMillis();
-		String a = "VFYcl1V7TNKE4eJ/"
-				+ "Hm4cEntfELfupwhx8tDwEqOx+13vWafcgyikHGO8ld3XxHf6tG2kfpofkq2vKESw"
-				+ "qvGsXS45QioEdn543E8oPam5ZusDuwv+o1DBmfHmdL57kdiW8n8SgaHdnjBsKyus3Bh7GFPxzbMNxjeg"
-				+ "MItKFSCWogE=";
+		String m = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDf7cQzFGr"
+				+ "PgBkg+D6M1U7XdddN gIlFiATQFcwvi24ZDcSu2ynFzuuoJU"
+				+ "RPIuqM8XNwATFIZ/pU4ZmouBUgzFwshUJg UFQArscNQFD1E"
+				+ "KmHuKY0pmi2dFHhxt51YOrSu1ozBOI1u/NM4OYX4KBzhVc6o"
+				+ "4pS iej1zqBLr3iNaDE4kwIDAQAB";
+		String s = "CPA2yD+OVY6dyhUaHxGDEkb1senvHS0+9WhDPbSQfARc7Mi"
+				+ "QwEr/HUrHIwBWPVv+5VbPfnLQTezj7VowtWPvjuk57G2B8OJ"
+				+ "M9FFE+RmZCSUCg5PsCRemj9oNz6A5qrX6BCKjLWolZAjOVVl"
+				+ "s4eqNJk3iBKNfCr3ckyVthaxOoKU=";
+		String CApk = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDCeNFi"
+				+ "COKGGC+fA7vvWT998Lxy7XI+L8AWIzmyXDQP4AlWTzCmcmDy"
+				+ "X+WWC7v05i/Uq9x2FwCCYVgARZqm5NTsAeWIFib6cz1V4V3H"
+				+ "oI8dYfi7KR67n9qCHx5ah/D1HCIldDaOXSPlCs9TkDBlm1Ai"
+				+ "Zv9hISsG9xIPiS+M7sVjYwIDAQAB";
 //		System.out.println(encrypt("",Key.getMyPublicKey()));
-		System.out.println(decryptNormal(a,Key.getMyPrivateKey()));
+		System.out.println(verifyNormal(m,s,CApk));
 		// 生成公钥和私钥
 //		genKeyPair();
 //		keyMap.put(0, Key.getBankPublicKey()); // 0表示公钥
